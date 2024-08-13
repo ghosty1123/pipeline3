@@ -19,17 +19,17 @@ jobs:
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
-        distribution: 'temurin' # Specify the JDK distribution
+        distribution: 'temurin'
         java-version: '11'
 
     - name: Build with Maven
-      run: mvn clean install
+      run: mvn -f path/to/your/pom.xml clean install
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
-        path: target/*.jar
+        path: path/to/your/target/*.jar
 
   test:
     runs-on: ubuntu-latest
@@ -42,17 +42,17 @@ jobs:
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
-        distribution: 'temurin' # Ensure consistency across jobs
+        distribution: 'temurin'
         java-version: '11'
 
     - name: Run unit tests
-      run: mvn test
+      run: mvn -f path/to/your/pom.xml test
 
     - name: Code coverage
-      run: mvn jacoco:report
+      run: mvn -f path/to/your/pom.xml jacoco:report
 
     - name: Code quality analysis
-      run: mvn sonar:sonar
+      run: mvn -f path/to/your/pom.xml sonar:sonar
 
   deploy:
     runs-on: ubuntu-latest
