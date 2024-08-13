@@ -16,16 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: List directory contents
-        run: ls -la
-
-      - name: Print working directory
-        run: pwd
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.3
         with:
-          node-version: '14'
+          node-version: '14'          # Specify the Node.js version to use
+          cache: 'npm'                # Use npm for caching
+          cache-dependency-path: 'package-lock.json'  # Path to the dependency file for caching
 
       - name: Install dependencies
         run: npm install
@@ -47,10 +43,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
         run: npm install
