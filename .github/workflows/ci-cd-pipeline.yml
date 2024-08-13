@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -23,26 +23,15 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./path/to/your/application
 
-      - name: Build application
+      - name: Build project
         run: npm run build
-        working-directory: ./path/to/your/application
 
-      - name: Upload build artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: ./path/to/your/application/build/
-
-      - name: Notify Slack on failure
-        if: failure()
-        run: |
-          if [ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
-            echo "Slack webhook URL is not set."
-            exit 1
-          fi
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Build failed!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          path: build/
 
   test:
     runs-on: ubuntu-latest
@@ -50,7 +39,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -59,50 +48,39 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./path/to/your/application
 
-      - name: Run unit tests
+      - name: Run tests
         run: npm test
-        working-directory: ./path/to/your/application
 
-      - name: Run code quality checks
+      - name: Run code analysis
         run: npm run lint
-        working-directory: ./path/to/your/application
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: ./path/to/your/application/test-results/
-
-      - name: Notify Slack on failure
-        if: failure()
-        run: |
-          if [ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
-            echo "Slack webhook URL is not set."
-            exit 1
-          fi
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Tests failed!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Code coverage
+        run: npm run coverage
 
   deploy:
     runs-on: ubuntu-latest
     needs: test
-    if: success()
+    if: success() # Only deploy if the test job succeeded
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Deploy to staging
         run: |
-          echo "Deploying to staging environment"
-          # Add your deployment script or commands here
+          echo "Deploying to staging environment..."
+          # Insert your deployment script or commands here
 
-      - name: Notify Slack on failure
-        if: failure()
+  notify:
+    runs-on: ubuntu-latest
+    needs: [build, test, deploy]
+    if: failure() # Only notify if any job failed
+
+    steps:
+      - name: Send notification
+        uses: actions/checkout@v3
         run: |
-          if [ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
-            echo "Slack webhook URL is not set."
-            exit 1
-          fi
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment failed!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          echo "Sending failure notification..."
+          # Insert your notification script or command here (e.g., Slack notification)
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Build or deployment failed. Please check the CI/CD pipeline."}' YOUR_SLACK_WEBHOOK_URL
