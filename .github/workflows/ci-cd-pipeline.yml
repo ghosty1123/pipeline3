@@ -26,16 +26,21 @@ jobs:
 
       - name: Build application
         run: npm run build
+        working-directory: ./path/to/your/application
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: build/
+          path: ./path/to/your/application/build/
 
       - name: Notify Slack on failure
         if: failure()
         run: |
+          if [ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            echo "Slack webhook URL is not set."
+            exit 1
+          fi
           curl -X POST -H 'Content-type: application/json' --data '{"text":"Build failed!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
 
   test:
@@ -53,22 +58,29 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./path/to/your/application
 
       - name: Run unit tests
         run: npm test
+        working-directory: ./path/to/your/application
 
       - name: Run code quality checks
         run: npm run lint
+        working-directory: ./path/to/your/application
 
       - name: Upload test results
         uses: actions/upload-artifact@v3
         with:
           name: test-results
-          path: test-results/
+          path: ./path/to/your/application/test-results/
 
       - name: Notify Slack on failure
         if: failure()
         run: |
+          if [ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            echo "Slack webhook URL is not set."
+            exit 1
+          fi
           curl -X POST -H 'Content-type: application/json' --data '{"text":"Tests failed!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
 
   deploy:
@@ -88,4 +100,8 @@ jobs:
       - name: Notify Slack on failure
         if: failure()
         run: |
+          if [ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            echo "Slack webhook URL is not set."
+            exit 1
+          fi
           curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment failed!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
