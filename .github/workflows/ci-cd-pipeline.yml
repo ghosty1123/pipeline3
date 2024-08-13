@@ -80,6 +80,6 @@ jobs:
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: 1, // Replace with your issue or PR number
+              issue_number: 1, // Replace with your issue or PR number, or use another method to notify your team
               body: message
             });
