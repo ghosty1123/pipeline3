@@ -71,6 +71,8 @@ jobs:
         run: |
           echo "Deploying to staging environment..."
           # Insert your deployment script or commands here
+          # Example: 
+          # scp -r ./build user@staging-server:/path/to/deploy
 
   notify:
     runs-on: ubuntu-latest
@@ -79,8 +81,6 @@ jobs:
 
     steps:
       - name: Send notification
-        uses: actions/checkout@v3
         run: |
           echo "Sending failure notification..."
-          # Insert your notification script or command here (e.g., Slack notification)
           curl -X POST -H 'Content-type: application/json' --data '{"text":"Build or deployment failed. Please check the CI/CD pipeline."}' YOUR_SLACK_WEBHOOK_URL
