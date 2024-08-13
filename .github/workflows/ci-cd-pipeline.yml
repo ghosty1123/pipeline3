@@ -23,13 +23,13 @@ jobs:
         java-version: '11'
 
     - name: Build with Maven
-      run: mvn -f app/pom.xml clean install
+      run: mvn clean install  # Removed the -f app/pom.xml assuming pom.xml is in the root directory
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
-        path: app/target/*.jar
+        path: target/*.jar  # Adjusted the path assuming the target directory is in the root
 
   test:
     runs-on: ubuntu-latest
@@ -46,13 +46,13 @@ jobs:
         java-version: '11'
 
     - name: Run unit tests
-      run: mvn -f app/pom.xml test
+      run: mvn test  # Removed the -f app/pom.xml assuming pom.xml is in the root directory
 
     - name: Code coverage
-      run: mvn -f app/pom.xml jacoco:report
+      run: mvn jacoco:report  # Removed the -f app/pom.xml assuming pom.xml is in the root directory
 
     - name: Code quality analysis
-      run: mvn -f app/pom.xml sonar:sonar
+      run: mvn sonar:sonar  # Removed the -f app/pom.xml assuming pom.xml is in the root directory
 
   deploy:
     runs-on: ubuntu-latest
